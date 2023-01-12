@@ -60,36 +60,31 @@ void SerialCommROS::getParameters(){
 void SerialCommROS::run(){
     ROS_INFO_STREAM("SerialCommROS - rosnode runs at {" << loop_frequency_ <<"} Hz\n");
     ros::Rate rate(loop_frequency_);
-    // ros::Rate rate(30000);
 
     ros::Time time_prev = ros::Time::now();
     ros::Time time_curr;
+
     while(ros::ok()){
-        bool is_ready = isPacketReady();
-        if(is_ready) {
-            uint32_t len = getMessage(buf_recv_);
+        bool is_recv_packet_ready = isRecvPacketReady();
+        if(is_recv_packet_ready) {
+            uint32_t len = getRecvMessage(buf_recv_);
             
             if(len > 0){
-                // publish the Received message from the Nucleo board.
-                for(int i = 0; i < len; ++i) msg_recv_.data.push_back(buf_recv_[i]);
-                USHORT_UNION voltage_ushort;
-                voltage_ushort.bytes_[0] = buf_recv_[0];
-                voltage_ushort.bytes_[1] = buf_recv_[1];
+                // publish the message received from the Nucleo board.
+                for(int i = 0; i < len; ++i)
+                    msg_recv_.data.push_back(buf_recv_[i]);
 
-                float voltage_float= ((float)voltage_ushort.ushort_/65535.0f * 3.3f);
-                // ROS_INFO_STREAM("VOLTAGE : " << voltage_float << " V");
                 pub_msg_recv_.publish(msg_recv_);
                 msg_recv_.data.clear();
             }
             else{
-                ROS_WARN_STREAM("In 'getMessage()', it returns len == 0.  An empty packet might be received.");
+                ROS_WARN_STREAM("In 'getRecvMessage()', it returns len == 0.  An empty packet might be received.");
             }
-            
         }
         
         time_curr = ros::Time::now();
         double dt = (time_curr-time_prev).toSec();
-        if( dt > 0.9999){
+        if( dt > 0.99999999){ // show the statistics at every second.
             this->showSerialStatistics(dt);
             time_prev = time_curr;
         }
@@ -100,7 +95,7 @@ void SerialCommROS::run(){
 
 void SerialCommROS::callbackToSend(const std_msgs::UInt16MultiArray::ConstPtr& msg){
     int len = this->fill16bitsTo8bits(msg,buf_send_);
-    sendMessage(buf_send_, len);
+    sendMessageToNucleo(buf_send_, len);
 };  
 
 void SerialCommROS::showSerialStatistics(double dt){
@@ -129,17 +124,17 @@ void SerialCommROS::showSerialStatistics(double dt){
     seq_tx_success_prev = seq_tx_success;
 };
 
-bool SerialCommROS::isPacketReady(){
+bool SerialCommROS::isRecvPacketReady(){
     return serial_communicator_->isPacketReady();
 };
 
-uint32_t SerialCommROS::getMessage(unsigned char* data){
+uint32_t SerialCommROS::getRecvMessage(unsigned char* data){
     uint32_t len = 0;
     len = serial_communicator_->getPacket(data);
     return len;
 };
 
-void SerialCommROS::sendMessage(unsigned char* data, int len){
+void SerialCommROS::sendMessageToNucleo(unsigned char* data, int len){
     serial_communicator_->sendPacket(data, len);
 };
 

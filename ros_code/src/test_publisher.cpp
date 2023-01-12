@@ -4,6 +4,8 @@
 #include <ros/ros.h>
 #include <std_msgs/UInt16MultiArray.h>
 
+#define LOOP_RATE 400 // Hz
+
 int main(int argc, char **argv) {
     ros::init(argc, argv, "test_publisher");
 

@@ -78,10 +78,10 @@ private:
     boost::asio::io_service     io_service_;
     boost::asio::deadline_timer timeout_;
     
-    uint32_t idx_stk_;
+    uint32_t len_stack_;
     unsigned char packet_stack_[BUF_SIZE];
 
-// Related to RX
+// Related to RX (Nucleo -> PC)
 private:
     uint32_t seq_recv_;
     unsigned char buf_recv_[BUF_SIZE];
@@ -89,9 +89,9 @@ private:
     uint32_t len_packet_recv_;
     unsigned char packet_recv_[BUF_SIZE];
 
-    std::atomic<bool> flag_packet_ready_;
+    std::atomic<bool> flag_recv_packet_ready_;
 
-// Related to TX
+// Related to TX (PC -> Nucleo)
 private:
     uint32_t seq_send_;
     unsigned char buf_send_[BUF_SIZE];
@@ -99,7 +99,7 @@ private:
     uint32_t len_packet_send_;
     unsigned char packet_send_[BUF_SIZE];
 
-    std::atomic<bool> flag_send_packet_ready_;
+    std::atomic<bool> flag_ready_to_send_;
 
 // For debug
 private:

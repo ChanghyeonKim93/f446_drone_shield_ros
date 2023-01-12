@@ -46,3 +46,7 @@ target_link_libraries (serial_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boos
 
 add_executable(sensor_publisher_node src/main_sensor_publisher_node.cpp ${SRC})
 target_link_libraries (sensor_publisher_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES})
+
+add_executable(test_publisher_node src/test_publisher.cpp ${SRC})
+target_link_libraries (test_publisher_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES})
+
