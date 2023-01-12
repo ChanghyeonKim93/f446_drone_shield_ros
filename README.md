@@ -55,34 +55,42 @@ cd .. && catkin build f446_drone_shield_ros
    
 Befure usage, please **set a serial portname** (refer the below documentation to set the permanent udevrules name.), topicnames, baudrate and so on.
 
-3.Update USB udevrules
+
+3.Materials
 ------
-First, find a vendor ID and product ID of your device by the below command:
+* You can download the KiCAD PCB schematic of the 'F446_DRONE_SHIELD'.
 
-    lsusb
-    
-Then, you might get like this:
+4.Trouble Shooting
+------
 
-    Bus 001 Device 011: ID 0483:374b STMicroelectronics ST-LINK/V2.1
+* **Update udev_rules**
 
-'0483' is the vecdor ID and '374b' is the product ID. After, find a distinct serial number of your device (I assume your device is autoallocated on /dev/ttyACM0) by:
+    First, find a vendor ID and product ID of your device by the below command:
 
-    udevadm info -a -n /dev/ttyACM* | grep '{serial}' | head -n1
+        lsusb
 
-Then, you could see like:
+    Then, you might get like this:
 
-    ATTRS{serial}=="0672FF494851871222051346" // It differs depending on the board.
+        Bus 001 Device 011: ID 0483:374b STMicroelectronics ST-LINK/V2.1
 
-0672FF494851871222051346 is the very your device's distinct serial number. (Not always distinct. When using multiple usb devices, please check whether devices have same serial number.)
+    '0483' is the vecdor ID and '374b' is the product ID. After, find a distinct serial number of your device (I assume your device is autoallocated on /dev/ttyACM0) by:
 
-Make udevrules file at:
+        udevadm info -a -n /dev/ttyACM* | grep '{serial}' | head -n1
 
-    cd /etc/udev/rules.d
+    Then, you could see like:
 
-    sudo gedit 99-nucleo-serial.rules
-    
-In this file, type as below and save the file:
+        ATTRS{serial}=="0672FF494851871222051346" // It differs depending on the board.
 
-    SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", ATTRS{serial}=="0672FF494851871222051346", SYMLINK+="nucleo_f446re"
+    0672FF494851871222051346 is the very your device's distinct serial number. (Not always distinct. When using multiple usb devices, please check whether devices have same serial number.)
 
-As you can figure out, you can replace 'nucleo_f446re' with any name you want (but should be distinguished).
+    Make udevrules file at:
+
+        cd /etc/udev/rules.d
+
+        sudo gedit 99-nucleo-serial.rules
+
+    In this file, type as below and save the file:
+
+        SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", ATTRS{serial}=="0672FF494851871222051346", SYMLINK+="nucleo_f446re"
+
+    As you can figure out, you can replace 'nucleo_f446re' with any name you want (but should be distinguished).
