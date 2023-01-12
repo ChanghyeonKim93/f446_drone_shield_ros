@@ -8,7 +8,7 @@
 */
 
 // Loop period in milliseconds
-#define LOOP_PERIOD_MS 2.5 // 2: 500 Hz, 2.5: 400 Hz, 4: 250 Hz, 5: 200 Hz, 10: 100 Hz
+#define LOOP_PERIOD_MS 2.5 // in miiliseconds, 2: 500 Hz, 2.5: 400 Hz, 4: 250 Hz, 5: 200 Hz, 10: 100 Hz
 #define LOOP_PERIOD_US LOOP_PERIOD_MS*1000
 
 // Serial communication parameters
@@ -41,4 +41,14 @@
 // Sensor Trigger Pin parameters
 #define TRIGGER_PIN    PA_8
 
+// Encoder parameters
+#define MOTOR_ENCODER_PERIOD_MS  10   // in miiliseconds
+#define PULSE_PER_MOTOR_TURN     256 // depends on encoder spec.
+#define GEAR_RATIO               27  // depends on the gear spec.
+#define PULSE_PER_ROTATION       ((PULSE_PER_MOTOR_TURN)*(GEAR_RATIO))
+#define RADIAN_PER_ROTATION      (6.28318530718f)
+// RADIAN_PER_ROTATION / PULSE_PER_ROTATION == RADIAN_PER_PULSE
+// PULSE_PER_MOTOR_TURN*GEAR_RATIO == PULSE_PER_ROTATION
+// delta_counter / PULSE_PER_ROTATION == rotated ratio
+// delta_pulses * RADIAN_PER_PULSE == delta_radian
 #endif

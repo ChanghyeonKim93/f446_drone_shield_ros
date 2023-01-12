@@ -39,10 +39,10 @@ SerialCommunicator::~SerialCommunicator() {
     std::this_thread::sleep_for(1s);
 
     if(this->thread_rx_.joinable()) this->thread_rx_.join();
-    std::cerr << "                   -   RX thread joins successfully.\n";
+    std::cerr << "                   -   RX thread joins (turns off) successfully.\n";
 
     if(this->thread_tx_.joinable()) this->thread_tx_.join();
-    std::cerr << "                   -   TX thread joins successfully.\n";
+    std::cerr << "                   -   TX thread joins (turns off) successfully.\n";
 
     // Close the serial port.
     this->closeSerialPort();
@@ -222,7 +222,7 @@ void SerialCommunicator::processRX(std::shared_future<void> terminate_signal){
                             packet_stack_[idx_stk_] = c;
                             ++idx_stk_;
                         }
-                        else if( c == ETX ){ // 2) DLE, ETX
+                        else if( c == ETX ) { // 2) DLE, ETX
                             flagStacking = false;
                             flagDLEFound = false;
 
@@ -280,7 +280,6 @@ void SerialCommunicator::processRX(std::shared_future<void> terminate_signal){
 
                             std::cout << "WARNING    ! - While stacking, DLE is found, but there is no ETX.\n" << std::endl;
                             std::cout << "DLE,no ETX ! seq: " << seq_recv_ <<", crc: " << seq_recv_crc_error_ <<", ofl: " << seq_recv_overflow_ <<", ect:" << seq_recv_exception_<<"\n";
-
                         }
                     }
                     else { // 이전에 DLE가 발견되지 않았다.

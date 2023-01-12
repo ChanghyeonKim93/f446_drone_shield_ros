@@ -1,13 +1,14 @@
 <launch>
     <!-- Serial settings-->
     <arg name="serial_port"           default="/dev/ttyACM0"/>
-    <arg name="baud_rate"             default="460800"/> <!-- 460800 default-->
+    <arg name="baud_rate"             default="921600"/> <!-- 921600 default-->
+    <!-- 921600: For 400 Hz TX/RX, up to 80 bytes can be sent. (TX 80 bytes, RX 80 bytes = 160 bytes)-->
 
     <!-- Topicnames & motor control signal publish frequency-->
     <arg name="topicname_pwm"         default="/serial/pc/to_fmu"/>
     <arg name="topicname_from_nucleo" default="/serial/pc/from_fmu"/>
 
-    <arg name="rosnode_frequency"     default="400"/> <!-- 400 Hz default-->
+    <arg name="rosnode_frequency"     default="2000"/> <!-- 2000 Hz default. This node needs to poll the data from MCU. -->
 
     <node pkg="f446_drone_shield_ros" name="serial_node" type="serial_node" output="screen">
         <param name="serial_port"           type="string" value="$(arg serial_port)"/>
@@ -17,7 +18,6 @@
         <param name="topicname_from_nucleo" type="string" value="$(arg topicname_from_nucleo)"/>
         <param name="frequency"             type="int"    value="$(arg rosnode_frequency)"/>
     </node>
-
 
     <!-- <node pkg="f446_drone_shield_ros" name="sensor_publisher_node" type="sensor_publisher_node" output="screen">
     </node> -->

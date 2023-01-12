@@ -41,11 +41,8 @@ include_directories( ${catkin_INCLUDE_DIRS} )
 include_directories( ${Eigen_INCLUDE_DIRS} )
 
 # executables
-add_executable(serial_node src/main.cpp ${SRC})
+add_executable(serial_node src/main_serial_node.cpp ${SRC})
 target_link_libraries (serial_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY})
 
-
-add_executable(sensor_publisher_node src/main_sensor_publisher.cpp ${SRC})
+add_executable(sensor_publisher_node src/main_sensor_publisher_node.cpp ${SRC})
 target_link_libraries (sensor_publisher_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES})
-# add_executable(test_publisher src/test_publisher.cpp ${SRC})
-# target_link_libraries (test_publisher ${catkin_LIBRARIES} ${Eigen_LIBRARIES})

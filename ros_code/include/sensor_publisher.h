@@ -28,10 +28,14 @@ private:
 
     // ROS related
     ros::NodeHandle nh_;
-    ros::Subscriber sub_serial_;
 
-    ros::Publisher pub_imu_;
-    ros::Publisher pub_battery_state_[4];
+    // Subscriber
+    ros::Subscriber sub_serial_; // Subscribe raw serial packet.
+
+    ros::Publisher pub_imu_;          // Publish IMU data
+    ros::Publisher pub_adc_state_[2]; // Publish ADC data.
+    ros::Publisher pub_sonar_dist_;   // Publish sonar distance
+    ros::Publisher pub_encoder_[2];   // Publish encoder data (for UGV shield only)
 
 private:
     void callbackSerial(const std_msgs::Int8MultiArray::ConstPtr& msg){
@@ -115,7 +119,7 @@ private:
             for(int j = 0; j < 4; ++j){
                 msg_bat[j].header.stamp = ros::Time::now();
                 msg_bat[j].voltage = (float)adc[j].ushort_*analog_in_scaler;
-                pub_battery_state_[j].publish(msg_bat[j]);
+                pub_adc_state_[j].publish(msg_bat[j]);
             }
         }
     };  
@@ -140,10 +144,10 @@ public:
 
         // publisher
         pub_imu_ = nh.advertise<sensor_msgs::Imu>("/mpu9250/imu",1);
-        pub_battery_state_[0] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/0",1);
-        pub_battery_state_[1] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/1",1);
-        pub_battery_state_[2] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/2",1);
-        pub_battery_state_[3] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/3",1);
+        pub_adc_state_[0] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/0",1);
+        pub_adc_state_[1] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/1",1);
+        pub_adc_state_[2] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/2",1);
+        pub_adc_state_[3] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/3",1);
         
         this->run();
     };
