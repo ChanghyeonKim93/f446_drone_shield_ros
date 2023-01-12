@@ -1,6 +1,6 @@
 <launch>
     <!-- Serial settings-->
-    <arg name="serial_port"           default="/dev/ttyUSB0"/>
+    <arg name="serial_port"           default="/dev/ttyACM0"/>
     <arg name="baud_rate"             default="460800"/> <!-- 460800 default-->
 
     <!-- Topicnames & motor control signal publish frequency-->
@@ -17,4 +17,8 @@
         <param name="topicname_from_nucleo" type="string" value="$(arg topicname_from_nucleo)"/>
         <param name="frequency"             type="int"    value="$(arg rosnode_frequency)"/>
     </node>
+
+
+    <!-- <node pkg="f446_drone_shield_ros" name="sensor_publisher_node" type="sensor_publisher_node" output="screen">
+    </node> -->
 </launch>
