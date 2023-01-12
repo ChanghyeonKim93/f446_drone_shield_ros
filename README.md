@@ -86,7 +86,6 @@ Befure usage, please **set a serial portname** (refer the below documentation to
     Make udevrules file at:
 
         cd /etc/udev/rules.d
-
         sudo gedit 99-nucleo-serial.rules
 
     In this file, type as below and save the file:
