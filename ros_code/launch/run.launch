@@ -1,0 +1,20 @@
+<launch>
+    <!-- Serial settings-->
+    <arg name="serial_port"           default="/dev/ttyUSB0"/>
+    <arg name="baud_rate"             default="460800"/> <!-- 460800 default-->
+
+    <!-- Topicnames & motor control signal publish frequency-->
+    <arg name="topicname_pwm"         default="/serial/pc/to_fmu"/>
+    <arg name="topicname_from_nucleo" default="/serial/pc/from_fmu"/>
+
+    <arg name="rosnode_frequency"     default="400"/> <!-- 400 Hz default-->
+
+    <node pkg="f446_drone_shield_ros" name="serial_node" type="serial_node" output="screen">
+        <param name="serial_port"           type="string" value="$(arg serial_port)"/>
+        <param name="baud_rate"             type="int"    value="$(arg baud_rate)"/>
+
+        <param name="topicname_pwm"         type="string" value="$(arg topicname_pwm)"/>
+        <param name="topicname_from_nucleo" type="string" value="$(arg topicname_from_nucleo)"/>
+        <param name="frequency"             type="int"    value="$(arg rosnode_frequency)"/>
+    </node>
+</launch>
