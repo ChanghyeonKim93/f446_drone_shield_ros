@@ -2,6 +2,7 @@
 #define _ICM42605_SPI_H_
 
 #include "mbed.h"
+#include "../parameters.h"
 
 /* ICM42605 registers
 https://store.invensense.com/datasheets/invensense/DS-ICM-42605v1-2.pdf
@@ -172,12 +173,12 @@ class ICM42605_SPI
 {
 public:
     ICM42605_SPI();
-    floag getAres(uint8_t Ascale);
-    floag getGres(uint8_t Gscale);
+    float getAres(uint8_t Ascale);
+    float getGres(uint8_t Gscale);
     uint8_t getChipID();
 
 public:
-    void init();
+    void init(uint8_t Ascale, uint8_t Gscale, uint8_t AODR, uint8_t GODR);
     void offsetBias(float* dest1, float* dest2);
     void reset();
     void selfTest();
@@ -186,6 +187,12 @@ public:
     void readData(int16_t* destination);
     uint8_t status();
 
+private:
+    uint8_t _readRegister(   uint8_t addr );
+    uint8_t _writeRegister(  uint8_t addr, uint8_t data );
+    uint8_t _readBuffer(     uint8_t addr, uint8_t len, uint8_t* buf );
+    uint8_t _writeBuffer(    uint8_t addr, uint8_t len, uint8_t* buf );
+    
 private:
     float _aRes, _gRes;
     

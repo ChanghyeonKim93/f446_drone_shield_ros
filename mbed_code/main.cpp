@@ -87,6 +87,10 @@ enum MessageTypeByLength {
 };
 SerialCommunicatorMbed serial_usb(BAUD_RATE, SERIAL_TX_PIN, SERIAL_RX_PIN);
 
+// IMU
+#include "icm42605_library/icm42605_spi.h"
+ICM42605_SPI imu;
+
 void workfunction_readSerialUSB() {
     if(serial_usb.tryToReadSerialBuffer()) { // packet ready!
         led_signal = 1;
@@ -159,7 +163,24 @@ int main()
     ledSignals_OK(led_signal, 2);
 
     // IMU initialize
-    // ICM42605 icm;
+    imu.reset(); // software reset ICM42605 to default registers
+
+    /* Specify sensor parameters (sample rate is twice the bandwidth)
+    * choices are:
+        AFS_2G, AFS_4G, AFS_8G, AFS_16G  
+        GFS_15_125DPS, GFS_31_25DPS, GFS_62_5DPS, GFS_125DPS, GFS_250DPS, GFS_500DPS, GFS_1000DPS, GFS_2000DPS 
+        AODR_1_5625Hz, AODR_3_125Hz, AODR_6_25Hz, AODR_12_5Hz, AODR_25Hz, AODR_50Hz, AODR_100Hz, AODR_200Hz, AODR_500Hz, AODR_1000Hz, AODR_2000Hz, AODR_4000Hz, AODR_8000Hz
+        GODR_12_5Hz, GODR_25Hz, GODR_50Hz, GODR_100Hz, GODR_200Hz, GODR_500Hz, GODR_1000Hz, GODR_2000Hz, GODR_4000Hz, GODR_8000Hz
+    */ 
+    uint8_t Ascale = AFS_8G, Gscale = GFS_2000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
+
+    FLOAT_UNION ax, ay, az;
+    FLOAT_UNION gx, gy, gz;
+
+    imu.reset();
+    float aRes = imu.getAres(Ascale);
+    float gRes = imu.getGres(Gscale);
+    imu.init(Ascale, Gscale, AODR, GODR);
     ledSignals_OK(led_signal, 3);
 
     // Encoder initialize
@@ -175,11 +196,6 @@ int main()
             sonar_dist_mm.ushort_ = ultra_sonic.getCurrentDistance(); // timeout 
 
             // Get encoder values
-            // count3 = __HAL_TIM_GET_COUNTER(&timer3);
-            // dir3   = __HAL_TIM_IS_TIM_COUNTING_DOWN(&timer3);
-            // count4 = __HAL_TIM_GET_COUNTER(&timer4);
-            // dir4   = __HAL_TIM_IS_TIM_COUNTING_DOWN(&timer4);
-            // printf("E1: %d%s, E2: %d%s\r\n", count3, dir3 == 0 ? "+":"-", count4, dir4 == 0 ? "+":"-" );
             int32_t dcnt_A = motor_encoder.getDeltaCounter_A();
             int32_t dcnt_B = motor_encoder.getDeltaCounter_B();
             radian_per_sec_A.float_ = motor_encoder.getAngularVelocity_A();
@@ -190,7 +206,22 @@ int main()
             adc2_voltage_ushort.ushort_ = adc2.read_u16();
 
             // printf("A1: %5d A2: %5d D: %5d[mm]\r\n", adc1_voltage_ushort.ushort_, adc2_voltage_ushort.ushort_, sonar_distance_in_mm);
+            int16_t ICM42605Data[7];        // Stores the 16-bit signed sensor output
+            imu.readData(ICM42605Data); 
 
+            // Now we'll calculate the accleration value into actual g's
+            float ax = (float)ICM42605Data[1]*aRes;  // get actual g value, this depends on scale being set
+            float ay = (float)ICM42605Data[2]*aRes;   
+            float az = (float)ICM42605Data[3]*aRes;  
+
+            // Calculate the gyro value into actual degrees per second
+            float gx = (float)ICM42605Data[4]*gRes;  // get actual gyro value, this depends on scale being set
+            float gy = (float)ICM42605Data[5]*gRes;  
+            float gz = (float)ICM42605Data[6]*gRes; 
+
+            printf("acc: %d %d %d, gyro: %d %d %d\r\n",
+                ICM42605Data[1], ICM42605Data[2], ICM42605Data[3],
+                ICM42605Data[4], ICM42605Data[5], ICM42605Data[6]);
 
             if(serial_usb.writable()) { // If serial USB can be written,
                 // Time 
@@ -269,7 +300,7 @@ int main()
                 // Send length
                 len_packet_send = 39;
 
-                tryToSendSerialUSB(); // Send!
+                // tryToSendSerialUSB(); // Send!
 
                 // flag_imu_ready = false;
                 time_send_prev = time_curr;
