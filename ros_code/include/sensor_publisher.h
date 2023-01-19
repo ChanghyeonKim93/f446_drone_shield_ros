@@ -44,31 +44,31 @@ private:
             FLOAT_UNION val;
             int idx = 0;
             val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            acc_[0] = (double)val.float_ * 9.8065;
+            acc_[0] = (double)val.float_ * acc_scale_;
 
             idx = 4; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            acc_[1] = (double)val.float_ * 9.8065;
+            acc_[1] = (double)val.float_ * acc_scale_;
 
             idx = 8; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            acc_[2] = (double)val.float_ * 9.8065;
+            acc_[2] = (double)val.float_ * acc_scale_;
 
             idx = 12; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            gyro_[0] = (double)val.float_ ;
+            gyro_[0] = (double)val.float_ * gyro_scale_;
 
             idx = 16; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            gyro_[1] = (double)val.float_ ;
+            gyro_[1] = (double)val.float_ * gyro_scale_;
 
             idx = 20; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            gyro_[2] = (double)val.float_ ;
+            gyro_[2] = (double)val.float_ * gyro_scale_;
 
             idx = 24; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            mag_[0] = (double)val.float_ ;
+            mag_[0] = (double)val.float_ * mag_scale_;
 
             idx = 28; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            mag_[1] = (double)val.float_ ;
+            mag_[1] = (double)val.float_ * mag_scale_;
 
             idx = 32; val.bytes_[0] = msg->data[idx]; val.bytes_[1] = msg->data[++idx]; val.bytes_[2] = msg->data[++idx]; val.bytes_[3] = msg->data[++idx];
-            mag_[2] = (double)val.float_ ;
+            mag_[2] = (double)val.float_ * mag_scale_;
 
             USHORT_UNION sec;
             UINT_UNION   usec;
@@ -126,7 +126,7 @@ private:
             sensor_msgs::Range msg_sonar;
             msg_sonar.header.stamp = ros::Time::now();
             msg_sonar.radiation_type = sensor_msgs::Range::ULTRASOUND;
-            msg_sonar.field_of_view = 10/180.0*M_PI; // degree
+            msg_sonar.field_of_view = 10/180.0*M_PI; // radian
             msg_sonar.range = (float)(sonar_dist_in_mm.ushort_)*0.001f; // meters
             msg_sonar.min_range = 0.05f; // meters
             msg_sonar.max_range = 3.3f; // meters
@@ -147,16 +147,20 @@ public:
     SensorPublisher(ros::NodeHandle& nh) 
     : nh_(nh) 
     {
-        acc_scale_   = 4.0/32768.0 * 9.81; // m/s2
-        gyro_scale_  = 1000.0/32768.0/(180.0)*M_PI; // rad/s
+        acc_scale_   = 9.8065; // m/s2
+        gyro_scale_  = M_PI/180.0f; // rad/s
         mag_scale_   = 10.0*4219.0/32760.0; // milliGauss
+
         // Subscriber
         sub_serial_ = nh.subscribe<std_msgs::Int8MultiArray>("/serial/pc/from_fmu",1, &SensorPublisher::callbackSerial, this);
 
         // publisher
         pub_imu_ = nh.advertise<sensor_msgs::Imu>("/icm42605/imu",1);
+
         pub_battery_state_[0] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/0",1);
         pub_battery_state_[1] = nh.advertise<sensor_msgs::BatteryState>("/battery_state/1",1);
+
+        pub_sonar_ = nh_.advertise<sensor_msgs::Range>("/hcsr04/range",1);
         
         this->run();
     };
