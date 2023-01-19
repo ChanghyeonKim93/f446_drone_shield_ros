@@ -163,8 +163,6 @@ int main()
     ledSignals_OK(led_signal, 2);
 
     // IMU initialize
-    imu.reset(); // software reset ICM42605 to default registers
-
     /* Specify sensor parameters (sample rate is twice the bandwidth)
     * choices are:
         AFS_2G, AFS_4G, AFS_8G, AFS_16G  
@@ -172,14 +170,13 @@ int main()
         AODR_1_5625Hz, AODR_3_125Hz, AODR_6_25Hz, AODR_12_5Hz, AODR_25Hz, AODR_50Hz, AODR_100Hz, AODR_200Hz, AODR_500Hz, AODR_1000Hz, AODR_2000Hz, AODR_4000Hz, AODR_8000Hz
         GODR_12_5Hz, GODR_25Hz, GODR_50Hz, GODR_100Hz, GODR_200Hz, GODR_500Hz, GODR_1000Hz, GODR_2000Hz, GODR_4000Hz, GODR_8000Hz
     */ 
-    uint8_t Ascale = AFS_8G, Gscale = GFS_2000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
+    uint8_t Ascale = AFS_4G, Gscale = GFS_2000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
+    FLOAT_UNION ax, ay, az, gx, gy, gz, mx, my, mz;
+    FLOAT_UNION aRes, gRes, mRes;
 
-    FLOAT_UNION ax, ay, az;
-    FLOAT_UNION gx, gy, gz;
-
-    imu.reset();
-    float aRes = imu.getAres(Ascale);
-    float gRes = imu.getGres(Gscale);
+    imu.reset(); // software reset ICM42605 to default registers
+    aRes.float_ = imu.getAres(Ascale);
+    gRes.float_ = imu.getGres(Gscale);
     imu.init(Ascale, Gscale, AODR, GODR);
     ledSignals_OK(led_signal, 3);
 
@@ -210,18 +207,22 @@ int main()
             imu.readData(ICM42605Data); 
 
             // Now we'll calculate the accleration value into actual g's
-            float ax = (float)ICM42605Data[1]*aRes;  // get actual g value, this depends on scale being set
-            float ay = (float)ICM42605Data[2]*aRes;   
-            float az = (float)ICM42605Data[3]*aRes;  
+            ax.float_ = (float)ICM42605Data[1]*aRes.float_; // get actual g value, this depends on scale being set
+            ay.float_ = (float)ICM42605Data[2]*aRes.float_;   
+            az.float_ = (float)ICM42605Data[3]*aRes.float_;  
 
             // Calculate the gyro value into actual degrees per second
-            float gx = (float)ICM42605Data[4]*gRes;  // get actual gyro value, this depends on scale being set
-            float gy = (float)ICM42605Data[5]*gRes;  
-            float gz = (float)ICM42605Data[6]*gRes; 
+            gx.float_ = (float)ICM42605Data[4]*gRes.float_; // get actual gyro value, this depends on scale being set
+            gy.float_ = (float)ICM42605Data[5]*gRes.float_;
+            gz.float_ = (float)ICM42605Data[6]*gRes.float_; 
 
-            printf("acc: %d %d %d, gyro: %d %d %d\r\n",
-                ICM42605Data[1], ICM42605Data[2], ICM42605Data[3],
-                ICM42605Data[4], ICM42605Data[5], ICM42605Data[6]);
+            mx.float_ = 0*mRes.float_;
+            my.float_ = 0*mRes.float_;
+            mz.float_ = 0*mRes.float_;
+
+            // printf("acc: %d %d %d, gyro: %d %d %d\r\n",
+            //     ICM42605Data[1], ICM42605Data[2], ICM42605Data[3],
+            //     ICM42605Data[4], ICM42605Data[5], ICM42605Data[6]);
 
             if(serial_usb.writable()) { // If serial USB can be written,
                 // Time 
@@ -241,66 +242,67 @@ int main()
 
                 /*
                     <Packet structure>
-                        D[0] ~D[17] 3-axis acc. 3-axis gyro, 3-axis mag.
-                        D[18],D[19] time (second part)
-                        D[20]~D[23] time (microsecond part)
-                        D[24]       Cam trigger state
-                        D[25],D[26] ADC1
-                        D[27],D[28] ADC1
-                        D[29],D[30] Sonar distance
-
+                        D[0] ~D[35] 3-axis acc. 3-axis gyro. 3-axis mag.
+                        D[36],D[37] time (second part)
+                        D[38]~D[41] time (microsecond part)
+                        D[42]       Cam trigger state
+                        D[43],D[44] ADC1
+                        D[45],D[46] ADC2
+                        D[47],D[48] Sonar distance
+                        D[49]~D[52] encoder 1
+                        D[53]~D[56] encoder 2
                 */
 
                 // IMU data (3D acc, 3D gyro, 3D magnetometer)
-                // packet_send[0]  = acc_short[0].bytes_[0]; packet_send[1]  = acc_short[0].bytes_[1];
-                // packet_send[2]  = acc_short[1].bytes_[0]; packet_send[3]  = acc_short[1].bytes_[1];
-                // packet_send[4]  = acc_short[2].bytes_[0]; packet_send[5]  = acc_short[2].bytes_[1];
-                
-                // packet_send[6]  = gyro_short[0].bytes_[0]; packet_send[7]  = gyro_short[0].bytes_[1];
-                // packet_send[8]  = gyro_short[1].bytes_[0]; packet_send[9]  = gyro_short[1].bytes_[1];
-                // packet_send[10] = gyro_short[2].bytes_[0]; packet_send[11] = gyro_short[2].bytes_[1];
+                packet_send[0] = ax.bytes_[0]; packet_send[1] = ax.bytes_[1];  packet_send[2] = ax.bytes_[2];  packet_send[3] = ax.bytes_[3];
+                packet_send[4] = ay.bytes_[0]; packet_send[5] = ay.bytes_[1];  packet_send[6] = ay.bytes_[2];  packet_send[7] = ay.bytes_[3];
+                packet_send[8] = az.bytes_[0]; packet_send[9] = az.bytes_[1]; packet_send[10] = az.bytes_[2]; packet_send[11] = az.bytes_[3];
 
-                // packet_send[12] = mag_short[0].bytes_[0]; packet_send[13] = mag_short[0].bytes_[1];
-                // packet_send[14] = mag_short[1].bytes_[0]; packet_send[15] = mag_short[1].bytes_[1];
-                // packet_send[16] = mag_short[2].bytes_[0]; packet_send[17] = mag_short[2].bytes_[1];
+                packet_send[12] = gx.bytes_[0]; packet_send[13] = gx.bytes_[1]; packet_send[14] = gx.bytes_[2]; packet_send[15] = gx.bytes_[3];
+                packet_send[16] = gy.bytes_[0]; packet_send[17] = gy.bytes_[1]; packet_send[18] = gy.bytes_[2]; packet_send[19] = gy.bytes_[3];
+                packet_send[20] = gz.bytes_[0]; packet_send[21] = gz.bytes_[1]; packet_send[22] = gz.bytes_[2]; packet_send[23] = gz.bytes_[3];
 
-                packet_send[18]  = tsec.bytes_[0];  // time (second part, low)
-                packet_send[19]  = tsec.bytes_[1];  // time (second part, high)
+                packet_send[24] = mx.bytes_[0]; packet_send[25] = mx.bytes_[1]; packet_send[26] = mx.bytes_[2]; packet_send[27] = mx.bytes_[3];
+                packet_send[28] = my.bytes_[0]; packet_send[29] = my.bytes_[1]; packet_send[30] = my.bytes_[2]; packet_send[31] = my.bytes_[3];
+                packet_send[32] = mz.bytes_[0]; packet_send[33] = mz.bytes_[1]; packet_send[34] = mz.bytes_[2]; packet_send[35] = mz.bytes_[3];
+
+                packet_send[36]  = tsec.bytes_[0];  // time (second part, low)
+                packet_send[37]  = tsec.bytes_[1];  // time (second part, high)
                 
-                packet_send[20]  = tusec.bytes_[0]; // time (microsecond part, lowest)
-                packet_send[21]  = tusec.bytes_[1]; // time (microsecond part, low)
-                packet_send[22]  = tusec.bytes_[2]; // time (microsecond part, high)
-                packet_send[23]  = tusec.bytes_[3]; // time (microsecond part, highest)
+                packet_send[38]  = tusec.bytes_[0]; // time (microsecond part, lowest)
+                packet_send[39]  = tusec.bytes_[1]; // time (microsecond part, low)
+                packet_send[40]  = tusec.bytes_[2]; // time (microsecond part, high)
+                packet_send[41]  = tusec.bytes_[3]; // time (microsecond part, highest)
 
                 // Camera trigger state
-                packet_send[24]     = flag_camera_trigger; // 'CAMERA_TRIGGER_HIGH' or 'CAMERA_TRIGGER_LOW'
+                packet_send[42]     = flag_camera_trigger; // 'CAMERA_TRIGGER_HIGH' or 'CAMERA_TRIGGER_LOW'
                 flag_camera_trigger = CAMERA_TRIGGER_LOW;
 
                 // AnalogIn (battery voltage data)
-                packet_send[25]  = adc1_voltage_ushort.bytes_[0];
-                packet_send[26]  = adc1_voltage_ushort.bytes_[1];
-                packet_send[27]  = adc2_voltage_ushort.bytes_[0];
-                packet_send[28]  = adc2_voltage_ushort.bytes_[1];
+                packet_send[43]  = adc1_voltage_ushort.bytes_[0];
+                packet_send[44]  = adc1_voltage_ushort.bytes_[1];
+                packet_send[45]  = adc2_voltage_ushort.bytes_[0];
+                packet_send[46]  = adc2_voltage_ushort.bytes_[1];
 
                 // Sonar distance 
-                packet_send[29] = sonar_dist_mm.bytes_[0];
-                packet_send[30] = sonar_dist_mm.bytes_[1];
+                packet_send[47] = sonar_dist_mm.bytes_[0];
+                packet_send[48] = sonar_dist_mm.bytes_[1];
 
                 // Encoder signals (4 bytes per encoder, values in float)
-                packet_send[31] = radian_per_sec_A.bytes_[0];
-                packet_send[32] = radian_per_sec_A.bytes_[1];
-                packet_send[33] = radian_per_sec_A.bytes_[2];
-                packet_send[34] = radian_per_sec_A.bytes_[3];
+                packet_send[49] = radian_per_sec_A.bytes_[0];
+                packet_send[50] = radian_per_sec_A.bytes_[1];
+                packet_send[51] = radian_per_sec_A.bytes_[2];
+                packet_send[52] = radian_per_sec_A.bytes_[3];
 
-                packet_send[35] = radian_per_sec_B.bytes_[0];
-                packet_send[36] = radian_per_sec_B.bytes_[1];
-                packet_send[37] = radian_per_sec_B.bytes_[2];
-                packet_send[38] = radian_per_sec_B.bytes_[3]; // total 
+                packet_send[53] = radian_per_sec_B.bytes_[0];
+                packet_send[54] = radian_per_sec_B.bytes_[1];
+                packet_send[55] = radian_per_sec_B.bytes_[2];
+                packet_send[56] = radian_per_sec_B.bytes_[3]; // total 
 
                 // Send length
-                len_packet_send = 39;
+                len_packet_send = 57;
 
-                // tryToSendSerialUSB(); // Send!
+                tryToSendSerialUSB(); // Send!
 
                 // flag_imu_ready = false;
                 time_send_prev = time_curr;
