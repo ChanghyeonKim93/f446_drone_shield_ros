@@ -21,4 +21,7 @@
 
     <node pkg="f446_drone_shield_ros" name="sensor_publisher_node" type="sensor_publisher_node" output="screen">
     </node> 
+
+    <node pkg="f446_drone_shield_ros" name="test_publisher_node" type="test_publisher_node" output="screen">
+    </node> 
 </launch>

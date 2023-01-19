@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh("~");
     ROS_INFO_STREAM("test_publisher - STARTS.");
 	
-    ros::Publisher pub = nh.advertise<std_msgs::UInt16MultiArray>("/serial/pwm",1);
+    ros::Publisher pub = nh.advertise<std_msgs::UInt16MultiArray>("/serial/pc/to_fmu",1);
 
 	try{
         uint16_t pwm_values[80] = {0,};

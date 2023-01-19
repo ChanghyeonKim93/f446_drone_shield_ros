@@ -170,9 +170,11 @@ int main()
         AODR_1_5625Hz, AODR_3_125Hz, AODR_6_25Hz, AODR_12_5Hz, AODR_25Hz, AODR_50Hz, AODR_100Hz, AODR_200Hz, AODR_500Hz, AODR_1000Hz, AODR_2000Hz, AODR_4000Hz, AODR_8000Hz
         GODR_12_5Hz, GODR_25Hz, GODR_50Hz, GODR_100Hz, GODR_200Hz, GODR_500Hz, GODR_1000Hz, GODR_2000Hz, GODR_4000Hz, GODR_8000Hz
     */ 
-    uint8_t Ascale = AFS_4G, Gscale = GFS_2000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
+    uint8_t Ascale = AFS_4G, Gscale = GFS_1000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
     FLOAT_UNION ax, ay, az, gx, gy, gz, mx, my, mz;
     FLOAT_UNION aRes, gRes, mRes;
+
+    int16_t imu_raw[7];        // Stores the 16-bit signed sensor output
 
     imu.reset(); // software reset ICM42605 to default registers
     aRes.float_ = imu.getAres(Ascale);
@@ -202,27 +204,22 @@ int main()
             adc1_voltage_ushort.ushort_ = adc1.read_u16();
             adc2_voltage_ushort.ushort_ = adc2.read_u16();
 
-            // printf("A1: %5d A2: %5d D: %5d[mm]\r\n", adc1_voltage_ushort.ushort_, adc2_voltage_ushort.ushort_, sonar_distance_in_mm);
-            int16_t ICM42605Data[7];        // Stores the 16-bit signed sensor output
-            imu.readData(ICM42605Data); 
+            // Get IMU data
+            imu.readData(imu_raw); 
 
             // Now we'll calculate the accleration value into actual g's
-            ax.float_ = (float)ICM42605Data[1]*aRes.float_; // get actual g value, this depends on scale being set
-            ay.float_ = (float)ICM42605Data[2]*aRes.float_;   
-            az.float_ = (float)ICM42605Data[3]*aRes.float_;  
+            ax.float_ = (float)imu_raw[1]*aRes.float_; // get actual g value, this depends on scale being set
+            ay.float_ = (float)imu_raw[2]*aRes.float_;   
+            az.float_ = (float)imu_raw[3]*aRes.float_;  
 
             // Calculate the gyro value into actual degrees per second
-            gx.float_ = (float)ICM42605Data[4]*gRes.float_; // get actual gyro value, this depends on scale being set
-            gy.float_ = (float)ICM42605Data[5]*gRes.float_;
-            gz.float_ = (float)ICM42605Data[6]*gRes.float_; 
+            gx.float_ = (float)imu_raw[4]*gRes.float_; // get actual gyro value, this depends on scale being set
+            gy.float_ = (float)imu_raw[5]*gRes.float_;
+            gz.float_ = (float)imu_raw[6]*gRes.float_; 
 
             mx.float_ = 0*mRes.float_;
             my.float_ = 0*mRes.float_;
             mz.float_ = 0*mRes.float_;
-
-            // printf("acc: %d %d %d, gyro: %d %d %d\r\n",
-            //     ICM42605Data[1], ICM42605Data[2], ICM42605Data[3],
-            //     ICM42605Data[4], ICM42605Data[5], ICM42605Data[6]);
 
             if(serial_usb.writable()) { // If serial USB can be written,
                 // Time 
@@ -239,19 +236,6 @@ int main()
                     wait_us(100);
                     signal_trigger = 0;
                 }
-
-                /*
-                    <Packet structure>
-                        D[0] ~D[35] 3-axis acc. 3-axis gyro. 3-axis mag.
-                        D[36],D[37] time (second part)
-                        D[38]~D[41] time (microsecond part)
-                        D[42]       Cam trigger state
-                        D[43],D[44] ADC1
-                        D[45],D[46] ADC2
-                        D[47],D[48] Sonar distance
-                        D[49]~D[52] encoder 1
-                        D[53]~D[56] encoder 2
-                */
 
                 // IMU data (3D acc, 3D gyro, 3D magnetometer)
                 packet_send[0] = ax.bytes_[0]; packet_send[1] = ax.bytes_[1];  packet_send[2] = ax.bytes_[2];  packet_send[3] = ax.bytes_[3];
