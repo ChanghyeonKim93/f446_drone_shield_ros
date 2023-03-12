@@ -68,7 +68,7 @@ Befure usage, please **set a serial portname** (refer the below documentation to
 <img src= "https://github.com/ChanghyeonKim93/f446_drone_shield_ros/blob/master/imgs/schematics.PNG" width="960">
 </p> 
 <p align = "left">
-<img src= "https://github.com/ChanghyeonKim93/f446_drone_shield_ros/blob/master/imgs/pcb.PNG" width="720">
+<img src= "https://github.com/ChanghyeonKim93/f446_drone_shield_ros/blob/master/imgs/pcb.PNG" width="360">
 </p> 
 
 4.Trouble Shooting
