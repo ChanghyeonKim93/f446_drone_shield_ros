@@ -60,9 +60,16 @@ cd .. && catkin build f446_drone_shield_ros
 Befure usage, please **set a serial portname** (refer the below documentation to set the permanent udevrules name.), topicnames, baudrate and so on.
 
 
-3.Materials
+3.PCB Schematics
 ------
-* You can download the KiCAD PCB schematic of the 'F446_DRONE_SHIELD'.
+* You can see the KiCAD PCB schematic of the 'F446_DRONE_SHIELD' as belows:
+
+<p align = "left">
+<img src= "https://github.com/ChanghyeonKim93/f446_drone_shield_ros/blob/master/imgs/schematics.PNG" width="960">
+</p> 
+<p align = "left">
+<img src= "https://github.com/ChanghyeonKim93/f446_drone_shield_ros/blob/master/imgs/pcb.PNG" width="720">
+</p> 
 
 4.Trouble Shooting
 ------
