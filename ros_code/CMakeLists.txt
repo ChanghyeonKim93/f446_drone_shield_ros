@@ -19,12 +19,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-catkin_package(
-  DEPENDS Eigen
-  CATKIN_DEPENDS roscpp
-  INCLUDE_DIRS include
-)
-
 set(SRC ${SRC} 
     src/timer.cpp
 
@@ -33,18 +27,24 @@ set(SRC ${SRC}
     src/crc16.cpp
 )
 
-set(includeDirs ${includeDirs} ${CMAKE_CURRENT_BINARY_DIR})
-set(includeDirs ${includeDirs} include)
+set(INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+set(INCLUDE_DIRS ${INCLUDE_DIRS} include)
 
-include_directories( ${includeDirs} )
+catkin_package(
+  DEPENDS Eigen
+  CATKIN_DEPENDS roscpp
+  INCLUDE_DIRS include
+)
+
+include_directories( ${INCLUDE_DIRS} )
 include_directories( ${catkin_INCLUDE_DIRS} )
 include_directories( ${Eigen_INCLUDE_DIRS} )
 
 # executables
-add_executable(serial_node src/main_serial_node.cpp ${SRC})
-target_link_libraries (serial_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY})
+add_executable(serial_comm_node src/node_serial_comm.cpp ${SRC})
+target_link_libraries (serial_comm_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_REGEX_LIBRARY})
 
-add_executable(sensor_publisher_node src/main_sensor_publisher_node.cpp ${SRC})
+add_executable(sensor_publisher_node src/node_sensor_publisher.cpp ${SRC})
 target_link_libraries (sensor_publisher_node ${catkin_LIBRARIES} ${Eigen_LIBRARIES})
 
 add_executable(test_publisher_node src/test_publisher.cpp ${SRC})

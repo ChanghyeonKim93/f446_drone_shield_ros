@@ -5,16 +5,16 @@
     <!-- 921600: For 400 Hz TX/RX, up to 80 bytes can be sent. (TX 80 bytes, RX 80 bytes = 160 bytes)-->
 
     <!-- Topicnames & motor control signal publish frequency-->
-    <arg name="topicname_pwm"         default="/serial/pc/to_fmu"/>
+    <arg name="topicname_to_nucleo"   default="/serial/pc/to_fmu"/>
     <arg name="topicname_from_nucleo" default="/serial/pc/from_fmu"/>
 
     <arg name="rosnode_frequency"     default="2000"/> <!-- 2000 Hz default. This node needs to poll the data from MCU. -->
 
-    <node pkg="f446_drone_shield_ros" name="serial_node" type="serial_node" output="screen">
+    <node pkg="f446_drone_shield_ros" name="serial_comm_node" type="serial_comm_node" output="screen">
         <param name="serial_port"           type="string" value="$(arg serial_port)"/>
         <param name="baud_rate"             type="int"    value="$(arg baud_rate)"/>
 
-        <param name="topicname_pwm"         type="string" value="$(arg topicname_pwm)"/>
+        <param name="topicname_to_nucleo"   type="string" value="$(arg topicname_to_nucleo)"/>
         <param name="topicname_from_nucleo" type="string" value="$(arg topicname_from_nucleo)"/>
         <param name="frequency"             type="int"    value="$(arg rosnode_frequency)"/>
     </node>

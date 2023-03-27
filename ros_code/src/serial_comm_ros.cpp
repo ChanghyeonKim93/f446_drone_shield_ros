@@ -48,7 +48,7 @@ void SerialCommROS::getParameters(){
     
     ros::param::get("~serial_port",           portname_);
     ros::param::get("~baud_rate",             baudrate_);
-    ros::param::get("~topicname_pwm",         topicname_msg_to_send_);
+    ros::param::get("~topicname_to_nucleo",   topicname_msg_to_send_);
     ros::param::get("~topicname_from_nucleo", topicname_msg_recv_);
     ros::param::get("~frequency",             loop_frequency_);
 
