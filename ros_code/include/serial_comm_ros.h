@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ros/ros.h>
 
-#include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include <std_msgs/UInt16MultiArray.h>
 
 #include "serial_communicator.h"
@@ -71,6 +71,6 @@ private:
     // RX messages (message which the user want to send to the Nucleo.)
     std::string topicname_msg_recv_;
     ros::Publisher pub_msg_recv_;
-    std_msgs::Int8MultiArray msg_recv_;
+    std_msgs::UInt8MultiArray msg_recv_;
 };
 #endif

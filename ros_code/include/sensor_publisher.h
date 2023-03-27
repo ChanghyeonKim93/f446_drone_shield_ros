@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <ros/ros.h>
-#include <std_msgs/Int8MultiArray.h>
+#include <std_msgs/UInt8MultiArray.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/BatteryState.h>
 #include <sensor_msgs/Range.h>
@@ -37,7 +37,7 @@ private:
     ros::Publisher pub_sonar_;
 
 private:
-    void callbackSerial(const std_msgs::Int8MultiArray::ConstPtr& msg){
+    void callbackSerial(const std_msgs::UInt8MultiArray::ConstPtr& msg){
         // ROS_INFO_STREAM("Data recv: " << msg->data.size() );
         
         if(msg->data.size() == 57){
@@ -152,7 +152,7 @@ public:
         mag_scale_   = 10.0*4219.0/32760.0; // milliGauss
 
         // Subscriber
-        sub_serial_ = nh.subscribe<std_msgs::Int8MultiArray>("/serial/pc/from_fmu",1, &SensorPublisher::callbackSerial, this);
+        sub_serial_ = nh.subscribe<std_msgs::UInt8MultiArray>("/serial/pc/from_fmu",1, &SensorPublisher::callbackSerial, this);
 
         // publisher
         pub_imu_ = nh.advertise<sensor_msgs::Imu>("/icm42605/imu",1);

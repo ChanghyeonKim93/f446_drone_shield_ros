@@ -23,7 +23,7 @@ baudrate_(115200), loop_frequency_(400)
     sub_msg_to_send_ = nh_.subscribe<std_msgs::UInt16MultiArray>(topicname_msg_to_send_, 1, &SerialCommROS::callbackToSend, this);
 
     // publisher
-    pub_msg_recv_ = nh_.advertise<std_msgs::Int8MultiArray>(topicname_msg_recv_,1);
+    pub_msg_recv_ = nh_.advertise<std_msgs::UInt8MultiArray>(topicname_msg_recv_,1);
 
     // run
     this->run();
