@@ -54,8 +54,16 @@ cd .. && catkin build f446_drone_shield_ros
 
 2.Usage
 ------
-    roslaunch f446_drone_shield_ros run.launch 
-    
+* Please check the **topicnames** before use.
+* You can send the **pwm command** by publishing the **"/serial/pc/from_fmu"** topic from your own rosnode.
+  * Message type: `UInt8MultiArray`
+  * Message format: PWM1_HIGH,PWM1_LOW,PWM2_HIGH,PWM2_LOW, ...., PWM8_HIGH,PWM8_LOW (total 16 bytes)
+    * Each two byte contains PWM signal (unsigned short -> two bytes unsigned char).
+    * You can change the unsigned short PWM signal into two bytes by using the `union struct`.
+
+```
+roslaunch f446_drone_shield_ros run.launch 
+``` 
    
 Befure usage, please **set a serial portname** (refer the below documentation to set the permanent udevrules name.), topicnames, baudrate and so on.
 
