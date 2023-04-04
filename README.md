@@ -54,18 +54,34 @@ cd .. && catkin build f446_drone_shield_ros
 
 2.Usage
 ------
-* Please check the **topicnames** before use.
-* You can send the **pwm command** by publishing the **"/serial/pc/from_fmu"** topic from your own rosnode.
-  * Message type: `UInt8MultiArray`
-  * Message format: PWM1_HIGH,PWM1_LOW,PWM2_HIGH,PWM2_LOW, ...., PWM8_HIGH,PWM8_LOW (total 16 bytes)
-    * Each two byte contains PWM signal (unsigned short -> two bytes unsigned char).
-    * You can change the unsigned short PWM signal into two bytes by using the `union struct`.
+* Before usage, please check and set a **serial portname** (refer the below documentation to set the permanent udevrules name.), topicnames, baudrate and so on.
 
+
+
+* Topics you can subscribe
+
+  `/icm42605/imu`(sensor_msgs::Imu): ICM42605 IMU streaming
+
+  `/battery_state/0`(sensor_msgs::BatteryState): Voltage read (VIN 0)
+
+  `/battery_state/1`(sensor_msgs::BatteryState): Voltage read (VIN 1)
+
+  `/hcsr04/range`(sensor_msgs::Range): Sonar distance sensor data
+
+* Topic you can publish to control PWM
+
+  `/serial/pc/to_fmu`(std_msgs::UInt8MultiArray): serialized data
+  
+  * You can send the **pwm command** by publishing the **"/serial/pc/from_fmu"** topic from your own rosnode.
+    * Message type: `UInt8MultiArray`
+    * Message format: PWM1_HIGH,PWM1_LOW,PWM2_HIGH,PWM2_LOW, ...., PWM8_HIGH,PWM8_LOW (total 16 bytes)
+      * Each two byte contains PWM signal (unsigned short -> two bytes unsigned char).
+    * You can easily change the unsigned short PWM signal into two bytes by using the `union struct`.
+    
+* Then, execute the launch.
 ```
 roslaunch f446_drone_shield_ros run.launch 
 ``` 
-   
-Befure usage, please **set a serial portname** (refer the below documentation to set the permanent udevrules name.), topicnames, baudrate and so on.
 
 
 3.PCB Schematics
