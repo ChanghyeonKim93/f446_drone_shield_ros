@@ -70,13 +70,12 @@ cd .. && catkin build f446_drone_shield_ros
 
 * Topic you can publish to control PWM
 
-  `/serial/pc/to_fmu`(std_msgs::UInt8MultiArray): serialized data
+  `/serial/pc/to_fmu`(std_msgs::UInt16MultiArray): pwm signal data
   
   * You can send the **pwm command** by publishing the **"/serial/pc/from_fmu"** topic from your own rosnode.
-    * Message type: `UInt8MultiArray`
-    * Message format: PWM1_HIGH,PWM1_LOW,PWM2_HIGH,PWM2_LOW, ...., PWM8_HIGH,PWM8_LOW (total 16 bytes)
-      * Each two byte contains PWM signal (unsigned short -> two bytes unsigned char).
-    * You can easily change the unsigned short PWM signal into two bytes by using the `union struct`.
+    * Message type: `UInt16MultiArray`
+    * Message format: PWM1,PWM2, ...., PWM8 (total 32 bytes)
+      * Each byte contains PWM signal (unsigned short, 0~65535).
     
 * Then, execute the launch.
 ```
