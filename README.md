@@ -44,10 +44,10 @@ cd .. && catkin build f446_drone_shield_ros
     1. Install Mbed Studio. You can download from the STMicro homepage. Any version is OK.
     2. Make a project in the Mbed Studio. (empty project)
     3. Copy the **all files in 'mbed_code'** folder of this repository to the project folder.
-    4. In Mbed Studio, go to the directory: **TARGET_STM -> TARGET_STM32F446xE -> TARGET_NUCLEO_F446RE**
-    5. Substitute the original 'PeripheralPins.c' file with the provided **'PeripheralPins.c'**.
+    4. In Mbed Studio, go to the directory: **mbed-os -> targets -> TARGET_STM -> TARGET_STM32F446xE -> TARGET_NUCLEO_F446RE**
+    5. Overwrite the original 'PeripheralPins.c' file by **the provided 'PeripheralPins.c'**.
     
-        It is to use the PWM 4,5,6,7 (TIM8, PA6,PA7,PA8,PA9 pins). Note that PA6,PA7,PA8,PA9 pins are originally mapped to TIM3.
+        This procedure is required to additionally use the PWM 4,5,6,7 (TIM8, PA6,PA7,PA8,PA9 pins). In default, only PWM 0,1,2,3 are provided. Note that PA6,PA7,PA8,PA9 pins are originally mapped to TIM3.
         
     6. Build the program in Mbed Studio and upload it to the Nucleo board.
 
