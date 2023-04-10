@@ -22,6 +22,14 @@
 #define SONAR_TRG      PA_9
 #define SONAR_ECHO     PA_10
 
+// IMU parameters
+#define ICM42605_SPI_MOSI PC_1
+#define ICM42605_SPI_MISO PC_2 
+#define ICM42605_SPI_CLK  PB_13
+#define ICM42605_SPI_CS   PB_12
+#define ICM42605_SPI_INT  PB_14
+#define WAIT_US_FOR_SPI   10 // us, DO NOT CHANGE
+
 // PWM parameters
 #define NUM_MOTORS     8
 #define PWM_FREQUENCY  500   // Hz
