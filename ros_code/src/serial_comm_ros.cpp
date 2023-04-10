@@ -113,8 +113,8 @@ void SerialCommROS::showSerialStatistics(double dt){
     double freq_tx = (double)(seq_tx_success - seq_tx_success_prev)/dt;
 
     // Show statistics
-    ROS_INFO_STREAM("RX: " << freq_rx << " Hz / seq- good: " << seq_rx_success << " / err- crc:" << seq_rx_crcerr << ",ofl:" << seq_rx_oflerr << ",excpt:" << seq_rx_ecp);
-    ROS_INFO_STREAM("TX: " << freq_tx << " Hz / seq- good: " << seq_tx_success);
+    ROS_INFO_STREAM("RX: " << freq_rx << " Hz / good: " << seq_rx_success << " / err- crc:" << seq_rx_crcerr << ",ofl:" << seq_rx_oflerr << ",excpt:" << seq_rx_ecp);
+    ROS_INFO_STREAM("TX: " << freq_tx << " Hz / good: " << seq_tx_success);
 
     // Update the previous data
     seq_rx_success_prev = seq_rx_success;

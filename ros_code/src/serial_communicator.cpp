@@ -362,7 +362,9 @@ void SerialCommunicator::processTX(std::shared_future<void> terminate_signal){
             // Zero send.
             USHORT_UNION pwm;
             pwm.ushort_ = 0;
-            std::cerr << "pwm ushort : " << pwm.ushort_ << "\n";
+
+            std::cout << "=============== Catch terminate signal in TX thread ===============\n";
+            std::cout << "    Send the zero signals to all PWM channels for safety.\n";
 
             mutex_tx_->lock();
             for(int i = 0; i < 8; ++i){
