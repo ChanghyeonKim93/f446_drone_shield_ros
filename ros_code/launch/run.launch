@@ -7,7 +7,6 @@
     <!-- Topicnames & motor control signal publish frequency-->
     <arg name="topicname_to_nucleo"   default="/serial/pc/to_fmu"/>
     <arg name="topicname_from_nucleo" default="/serial/pc/from_fmu"/>
-    <arg name="topicname_pwm"         default="/serial/pwm"/>
 
     <arg name="rosnode_frequency"     default="2000"/> <!-- 2000 Hz default. This node needs to poll the data from MCU. -->
 
@@ -17,7 +16,7 @@
 
         <param name="topicname_to_nucleo"   type="string" value="$(arg topicname_to_nucleo)"/>
         <param name="topicname_from_nucleo" type="string" value="$(arg topicname_from_nucleo)"/>
-        <param name="topicname_pwm"         type="string" value="$(arg topicname_pwm)"/>
+        
         <param name="frequency"             type="int"    value="$(arg rosnode_frequency)"/>
     </node>
 
