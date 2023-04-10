@@ -32,7 +32,7 @@
 
 // PWM parameters
 #define NUM_MOTORS     8
-#define PWM_FREQUENCY  500   // Hz
+#define PWM_FREQUENCY  500   // [Hz] // For DC motor of the UGV, pwm frequency over 15 kHz is needed.
 #define MOTOR_0_PWM    PA_0  // pwm2/1, // PWM (TIMER 2)
 #define MOTOR_1_PWM    PA_1  // pwm2/2
 #define MOTOR_2_PWM    PB_10 // pwm2/3
