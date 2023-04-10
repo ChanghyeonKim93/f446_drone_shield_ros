@@ -49,7 +49,7 @@ cd .. && catkin build f446_drone_shield_ros
     
         This procedure is required to additionally use the PWM 4,5,6,7 (TIM8, PA6,PA7,PA8,PA9 pins). In default, only PWM 0,1,2,3 are provided. Note that PA6,PA7,PA8,PA9 pins are originally mapped to TIM3.
         
-    6. Build the program in Mbed Studio and upload it to the Nucleo board.
+    6. Build the program in Mbed Studio **in Release Mode** and upload it to the Nucleo board.
 
 
 2.Usage
