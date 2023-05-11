@@ -5,8 +5,7 @@
 #include "../parameters.h"
 
 /* ICM42605 registers
-https://store.invensense.com/datasheets/invensense/DS-ICM-42605v1-2.pdf
-*/
+https://invensense.tdk.com/wp-content/uploads/2022/09/DS-000292-ICM-42605-v1.7.pdf*/
 // Bank 0
 #define ICM42605_DEVICE_CONFIG             0x11
 #define ICM42605_DRIVE_CONFIG              0x13

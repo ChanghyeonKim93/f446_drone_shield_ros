@@ -28,6 +28,13 @@
 #define ICM42605_SPI_CLK  PB_13
 #define ICM42605_SPI_CS   PB_12
 #define ICM42605_SPI_INT  PB_14
+
+#define ICM42688_SPI_MOSI PC_1
+#define ICM42688_SPI_MISO PC_2 
+#define ICM42688_SPI_CLK  PB_13
+#define ICM42688_SPI_CS   PB_12
+#define ICM42688_SPI_INT  PB_14
+
 #define WAIT_US_FOR_SPI   10 // us, DO NOT CHANGE
 
 // PWM parameters

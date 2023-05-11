@@ -88,8 +88,8 @@ enum MessageTypeByLength {
 SerialCommunicatorMbed serial_usb(BAUD_RATE, SERIAL_TX_PIN, SERIAL_RX_PIN);
 
 // IMU
-#include "icm42605_library/icm42605_spi.h"
-ICM42605_SPI imu;
+#include "icm42688_library/icm42688_spi.h"
+ICM42688_SPI imu;
 
 void workfunction_readSerialUSB() {
     if(serial_usb.tryToReadSerialBuffer()) { // packet ready!
@@ -170,7 +170,7 @@ int main()
         AODR_1_5625Hz, AODR_3_125Hz, AODR_6_25Hz, AODR_12_5Hz, AODR_25Hz, AODR_50Hz, AODR_100Hz, AODR_200Hz, AODR_500Hz, AODR_1000Hz, AODR_2000Hz, AODR_4000Hz, AODR_8000Hz
         GODR_12_5Hz, GODR_25Hz, GODR_50Hz, GODR_100Hz, GODR_200Hz, GODR_500Hz, GODR_1000Hz, GODR_2000Hz, GODR_4000Hz, GODR_8000Hz
     */ 
-    uint8_t Ascale = AFS_4G, Gscale = GFS_1000DPS, AODR = AODR_1000Hz, GODR = GODR_1000Hz;
+    uint8_t Ascale = AFS_4G, Gscale = GFS_1000DPS, AODR = AODR_1kHz, GODR = GODR_1kHz, aMode = aMode_LN, gMode = gMode_LN;
     FLOAT_UNION ax, ay, az, gx, gy, gz, mx, my, mz;
     FLOAT_UNION aRes, gRes, mRes;
 
@@ -179,7 +179,7 @@ int main()
     imu.reset(); // software reset ICM42605 to default registers
     aRes.float_ = imu.getAres(Ascale);
     gRes.float_ = imu.getGres(Gscale);
-    imu.init(Ascale, Gscale, AODR, GODR);
+    imu.init(Ascale, Gscale, AODR, GODR, aMode, gMode);
     ledSignals_OK(led_signal, 3);
 
     // Encoder initialize
