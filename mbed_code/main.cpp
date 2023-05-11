@@ -170,7 +170,7 @@ int main()
         AODR_1_5625Hz, AODR_3_125Hz, AODR_6_25Hz, AODR_12_5Hz, AODR_25Hz, AODR_50Hz, AODR_100Hz, AODR_200Hz, AODR_500Hz, AODR_1000Hz, AODR_2000Hz, AODR_4000Hz, AODR_8000Hz
         GODR_12_5Hz, GODR_25Hz, GODR_50Hz, GODR_100Hz, GODR_200Hz, GODR_500Hz, GODR_1000Hz, GODR_2000Hz, GODR_4000Hz, GODR_8000Hz
     */ 
-    uint8_t Ascale = AFS_4G, Gscale = GFS_1000DPS, AODR = AODR_1kHz, GODR = GODR_1kHz, aMode = aMode_LN, gMode = gMode_LN;
+    uint8_t Ascale = AFS_8G, Gscale = GFS_2000DPS, AODR = AODR_1kHz, GODR = GODR_1kHz, aMode = aMode_LN, gMode = gMode_LN;
     FLOAT_UNION ax, ay, az, gx, gy, gz, mx, my, mz;
     FLOAT_UNION aRes, gRes, mRes;
 
