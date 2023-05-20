@@ -2,7 +2,7 @@
 
 SerialCommROS::SerialCommROS(ros::NodeHandle& nh)
 : nh_(nh), portname_("/dev/ttyACM0"), 
-baudrate_(115200), loop_frequency_(400)
+baudrate_(115200), loop_frequency_(2000)
 {
     ROS_INFO_STREAM("SerialCommROS - starts.");
     ROS_INFO_STREAM("Default  port name  : " << portname_);

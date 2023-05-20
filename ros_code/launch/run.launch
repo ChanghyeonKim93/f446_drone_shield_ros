@@ -8,7 +8,7 @@
     <arg name="topicname_to_nucleo"   default="/serial/pc/to_fmu"/>
     <arg name="topicname_from_nucleo" default="/serial/pc/from_fmu"/>
 
-    <arg name="rosnode_frequency"     default="2000"/> <!-- 2000 Hz default. This node needs to poll the data from MCU. -->
+    <arg name="rosnode_frequency"     default="4000"/> <!-- 2000 Hz default. This node needs to poll the data from MCU. -->
 
     <node pkg="f446_drone_shield_ros" name="serial_comm_node" type="serial_comm_node" output="screen">
         <param name="serial_port"           type="string" value="$(arg serial_port)"/>

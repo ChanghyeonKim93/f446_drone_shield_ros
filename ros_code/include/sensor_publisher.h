@@ -36,9 +36,16 @@ private:
     ros::Publisher pub_battery_state_[2];
     ros::Publisher pub_sonar_;
 
+    ros::Time rostime_prev_;
+
+    bool is_reference_time_initialized_ = {false};
+    ros::Time rostime_reference_;
+    double mcutime_reference_;
+
 private:
     void callbackSerial(const std_msgs::UInt8MultiArray::ConstPtr& msg){
-        
+        ros::Time rostime_curr = ros::Time::now();
+
         if(msg->data.size() == 57){
             FLOAT_UNION val;
             int idx = 0;
@@ -71,7 +78,7 @@ private:
 
             USHORT_UNION sec;
             UINT_UNION   usec;
-            UINT64_UNION usec_long;
+
             idx = 36;
             sec.bytes_[0]  = msg->data[idx];  sec.bytes_[1] = msg->data[++idx];
             idx = 38;
@@ -81,7 +88,12 @@ private:
             idx = 42;
             uint8_t cam_trigger_state = msg->data[idx];
             time_ = ((double)sec.ushort_ + (double)usec.uint_*1e-6);
-            ROS_INFO_STREAM("IMU time: " << time_ <<" [sec]" );
+
+            if(!is_reference_time_initialized_){
+                rostime_reference_ = ros::Time::now();
+                mcutime_reference_ = time_;
+                is_reference_time_initialized_=true;
+            }
 
             // AnalogRead data
             USHORT_UNION adc[2];
@@ -101,7 +113,7 @@ private:
 
             // Fill IMU data
             sensor_msgs::Imu msg;
-            msg.header.stamp = ros::Time::now();
+            msg.header.stamp = ros::Time(rostime_reference_.toSec() + time_ - mcutime_reference_);
 
             msg.angular_velocity.x = gyro_[0];
             msg.angular_velocity.y = gyro_[1];
@@ -118,14 +130,14 @@ private:
             float analog_in_scaler = 3.3f/65535.0f;
             sensor_msgs::BatteryState msg_bat[4];
             for(int j = 0; j < 2; ++j){
-                msg_bat[j].header.stamp = ros::Time::now();
+                msg_bat[j].header.stamp = msg.header.stamp;
                 msg_bat[j].voltage = (float)adc[j].ushort_*analog_in_scaler;
                 pub_battery_state_[j].publish(msg_bat[j]);
             }
 
             // Sonar range data
             sensor_msgs::Range msg_sonar;
-            msg_sonar.header.stamp = ros::Time::now();
+            msg_sonar.header.stamp = msg.header.stamp;
             msg_sonar.radiation_type = sensor_msgs::Range::ULTRASOUND;
             msg_sonar.field_of_view = 10/180.0*M_PI; // radian
             msg_sonar.range = (float)(sonar_dist_in_mm.ushort_)*0.001f; // meters
@@ -133,11 +145,13 @@ private:
             msg_sonar.max_range = 3.3f; // meters
 
             pub_sonar_.publish(msg_sonar);
+
+            rostime_prev_ = rostime_curr;
         }
     };  
 
     void run(){
-        ros::Rate rate(10000);
+        ros::Rate rate(4000);
         while(ros::ok()){
             ros::spinOnce();
             rate.sleep();
