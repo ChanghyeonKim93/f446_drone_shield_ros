@@ -138,7 +138,7 @@ void tryToSendSerialUSB(){ event_queue.call(workfunction_sendSerialUSB); };
 
 // Timer 
 Timer timer;
-uint64_t us_curr;
+long long us_curr;
 USHORT_UNION tsec;
 UINT_UNION   tusec;
 
@@ -187,7 +187,7 @@ int main()
 
     while (true) {
         time_curr = timer.elapsed_time();
-        std::chrono::duration<int, std::micro> delta_time = time_curr - time_send_prev;
+        std::chrono::duration<uint64_t, std::micro> delta_time = time_curr - time_send_prev;
 
         if(delta_time.count() > LOOP_PERIOD_US) { // 2.5 ms interval
             // Get ultrasonic distance
@@ -223,9 +223,10 @@ int main()
 
             if(serial_usb.writable()) { // If serial USB can be written,
                 // Time 
+                
                 us_curr      = timer.elapsed_time().count(); // Current time
                 tsec.ushort_ = (uint16_t)(us_curr/1000000);
-                tusec.uint_  = (uint32_t)(us_curr-((uint32_t)tsec.ushort_)*1000000);
+                tusec.uint_  = (uint32_t)(us_curr - (uint64_t)(tsec.ushort_*1000000));
 
                 // Camera trigger signal output.
                 ++trigger_count;
