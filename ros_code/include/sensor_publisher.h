@@ -38,7 +38,6 @@ private:
 
 private:
     void callbackSerial(const std_msgs::UInt8MultiArray::ConstPtr& msg){
-        // ROS_INFO_STREAM("Data recv: " << msg->data.size() );
         
         if(msg->data.size() == 57){
             FLOAT_UNION val;
@@ -72,15 +71,17 @@ private:
 
             USHORT_UNION sec;
             UINT_UNION   usec;
+            UINT64_UNION usec_long;
             idx = 36;
             sec.bytes_[0]  = msg->data[idx];  sec.bytes_[1] = msg->data[++idx];
-            idx = 37;
+            idx = 38;
             usec.bytes_[0] = msg->data[idx]; usec.bytes_[1] = msg->data[++idx];
             usec.bytes_[2] = msg->data[++idx]; usec.bytes_[3] = msg->data[++idx];
 
             idx = 42;
             uint8_t cam_trigger_state = msg->data[idx];
-            time_ = ((double)sec.ushort_ + (double)usec.uint_/1000000.0);
+            time_ = ((double)sec.ushort_ + (double)usec.uint_*1e-6);
+            ROS_INFO_STREAM("IMU time: " << time_ <<" [sec]" );
 
             // AnalogRead data
             USHORT_UNION adc[2];
@@ -136,7 +137,7 @@ private:
     };  
 
     void run(){
-        ros::Rate rate(20000);
+        ros::Rate rate(10000);
         while(ros::ok()){
             ros::spinOnce();
             rate.sleep();

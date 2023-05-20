@@ -23,6 +23,11 @@ typedef union UINT_UNION_{
     unsigned char bytes_[4];
 } UINT_UNION;
 
+typedef union UINT64_UNION_{
+    uint64_t uint64_;
+    unsigned char bytes_[8];
+} UINT64_UNION;
+
 typedef union FLOAT_UNION_{
     float float_;
     unsigned char bytes_[4];   
